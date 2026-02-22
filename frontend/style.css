@@ -2,4 +2,7 @@ td {
     width: 100px; 
     height: 100px; 
     margin: 5px; 
+    background-color: antiquewhite;
+    text-align: center;
+    font-size: xx-large;
 }

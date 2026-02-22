@@ -1,0 +1,44 @@
+<html lang="hu">
+<head>
+    <meta charset="UTF-8" />
+    <title>Szoba Chat</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/script.js" defer></script>
+</head>
+<body>
+	<main>
+		<h2>Szoba létrehozása</h2>
+		<input id="newRoom" placeholder="Szoba neve" value="1">
+		<input id="newPassword" placeholder="Jelszó" value="1">
+		<button id="createBtn">Létrehoz</button>
+	
+		<h2>Csatlakozás meglévő szobához</h2>
+		<input id="joinRoom" placeholder="Szoba neve" />
+		<input id="joinPassword" placeholder="Jelszó" />
+		<button id="joinBtn">Csatlakozás</button>
+	</main>
+
+    <div id="chatArea" style="display: none">
+		<h3>Szoba: <span id="roomTitle"></span></h3>
+		<h3>Aktuális játékos: <span id="actPlayer"></span></h3>
+		<table>
+			<tr>
+				<td data-row="0" data-column="0"></td>
+				<td data-row="0" data-column="1"></td>
+				<td data-row="0" data-column="2"></td>
+			</tr>
+			<tr>
+				<td data-row="1" data-column="0"></td>
+				<td data-row="1" data-column="1"></td>
+				<td data-row="1" data-column="2"></td>
+			</tr>
+			<tr>
+				<td data-row="2" data-column="0"></td>
+				<td data-row="2" data-column="1"></td>
+				<td data-row="2" data-column="2"></td>
+			</tr>
+		</table>
+    </div>
+</body>
+</html>

@@ -1,47 +1,74 @@
-    const socket = io();
+const socket = io();
 
-    let currentRoom = "";
+let currentRoomName = "";
+let playerID = "";
+let currentRoom = {};
+let role = "";
+let canplace = true;
 
-    document.getElementById("createBtn").onclick = () => {
-      const roomName = document.getElementById("newRoom").value;
-      const password = document.getElementById("newPassword").value;
-      socket.emit("createRoom", { roomName, password }, (res) => {
-        if (res.success) joinRoom(roomName, password);
-        else alert(res.message);
-      });
-    };
+const table = document.querySelector("table");
+const actPlayerSpan = document.querySelector("#actPlayer");
 
-    document.getElementById("joinBtn").onclick = () => {
-      const roomName = document.getElementById("joinRoom").value;
-      const password = document.getElementById("joinPassword").value;
-      joinRoom(roomName, password);
-    };
+document.getElementById("createBtn").onclick = () => {
+	const roomName = document.getElementById("newRoom").value;
+	const password = document.getElementById("newPassword").value;
+	socket.emit("createRoom", { roomName, password }, (res) => {
+		if (res.success) joinRoom(roomName, password);
+		else alert(res.message);
+	});
+};
 
-    function joinRoom(roomName, password) {
-      socket.emit("joinRoom", { roomName, password }, (res) => {
-        if (res.success) {
-          currentRoom = roomName;
-          document.getElementById("chatArea").style.display = "block";
-          document.getElementById("roomTitle").innerText = roomName;
-        } else {
-          alert(res.message);
-        }
-      });
-    }
+document.getElementById("joinBtn").onclick = () => {
+	const roomName = document.getElementById("joinRoom").value;
+	const password = document.getElementById("joinPassword").value;
+	joinRoom(roomName, password);
+};
 
-    // ["ta1","ta2","ta3","ta4"].forEach(id => {
-    //   const ta = document.getElementById(id);
-    //   ta.addEventListener("keypress", (e) => {
-    //     if (e.key === "Enter") {
-    //       e.preventDefault();
-    //       const msg = ta.value;
-    //       socket.emit("chatMessage", { roomName: currentRoom, textarea: id, message: msg });
-    //       ta.value = "";
-    //     }
-    //   });
-    // });
+function joinRoom(roomName, password) {
+	socket.emit("joinRoom", { roomName, password }, (res) => {
+		if (res.success) {
+			currentRoomName = roomName;
+			document.getElementById("chatArea").style.display = "block";
+			document.querySelector("main").style.display = "none"
+			document.getElementById("roomTitle").innerText = roomName;
+		} else {
+			alert(res.message);
+		}
+	});
+}
 
-    socket.on("chatMessage", ({ textarea, message }) => {
-      const ta = document.getElementById(textarea);
-      ta.value += message + "\n";
-    });
+document.querySelectorAll("td").forEach(td => {
+	td.addEventListener("click", place);
+});
+
+function place(e) {
+	if (!canplace) return;
+	const td = e.target;
+	socket.emit("click", { roomName : currentRoomName, row : td.dataset.row, column : td.dataset.column, role });
+}
+
+socket.on("msg", ({ map, prevPlayer, winner = "none" }) => {
+	if (winner != "none"){
+		if (winner == role) alert("Nyertél!");
+		else alert("Vesztettél!");
+		return;
+	}
+
+	canplace = prevPlayer != role;
+	if (prevPlayer != role) actPlayerSpan.innerText = "Te";
+	else actPlayerSpan.innerText = "Ellenfél";
+	for (let row = 0; row < 3; row++) {
+		for (let col = 0; col < 3; col++) {
+			table.rows[row].cells[col].innerText = map[row][col];
+		}
+	}
+});
+
+socket.on("start", ({ room }) => {
+	currentRoom = room;
+	role = currentRoom.users.filter((u) => u.id == playerID)[0].role;
+})
+
+socket.on("id", ({ id }) => {
+	playerID = id;
+})
