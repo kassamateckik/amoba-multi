@@ -21,6 +21,10 @@ app.use(express.json());
 
 const rooms = {};
 
+app.get("/rooms", (_, res) => {
+	res.status(200).json({ rooms : Object.keys(rooms)});
+})
+
 io.on("connection", (socket) => {
 	console.log("Új felhasználó csatlakozott:", socket.id);
 
@@ -35,6 +39,7 @@ io.on("connection", (socket) => {
 															["", "", ""],
 															["", "", ""]
 														] };
+		socket.emit("newRoom");
 		callback({ success: true });
 	});
 
@@ -84,7 +89,7 @@ function checkIfWinner(map) {
 	if (map[2][0] == "O" && map[2][1] == "O" && map[2][2] == "O") return "circle";
 
 	if (map[0][0] == "O" && map[1][0] == "O" && map[2][0] == "O") return "circle";
-	if (map[0][1] == "O" && map[1][1] == "O" && map[2][0] == "O") return "circle";
+	if (map[0][1] == "O" && map[1][1] == "O" && map[2][1] == "O") return "circle";
 	if (map[0][2] == "O" && map[1][2] == "O" && map[2][2] == "O") return "circle";
 
 	if (map[0][0] == "O" && map[1][1] == "O" && map[2][2] == "O") return "circle";
@@ -96,11 +101,18 @@ function checkIfWinner(map) {
 	if (map[2][0] == "X" && map[2][1] == "X" && map[2][2] == "X") return "cross";
 
 	if (map[0][0] == "X" && map[1][0] == "X" && map[2][0] == "X") return "cross";
-	if (map[0][1] == "X" && map[1][1] == "X" && map[2][0] == "X") return "cross";
+	if (map[0][1] == "X" && map[1][1] == "X" && map[2][1] == "X") return "cross";
 	if (map[0][2] == "X" && map[1][2] == "X" && map[2][2] == "X") return "cross";
 
 	if (map[0][0] == "X" && map[1][1] == "X" && map[2][2] == "X") return "cross";
 	if (map[0][2] == "X" && map[1][1] == "X" && map[2][0] == "X") return "cross";
+
+	if (map[0][0] != "" && map[0][1] != "" && map[0][2] != "" &&
+		map[1][0] != "" && map[1][1] != "" && map[1][2] != "" &&
+		map[2][0] != "" && map[2][1] != "" && map[2][2] != "")
+	{
+		return "draw";
+	}
 
 	return "none";
 }

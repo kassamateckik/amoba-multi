@@ -17,11 +17,20 @@
 		<input id="joinRoom" placeholder="Szoba neve" />
 		<input id="joinPassword" placeholder="Jelszó" />
 		<button id="joinBtn">Csatlakozás</button>
+
+		<h2>Meglévő szobák:</h2>
+		<p id="rooms"></p>
+
+		<section id="pizza">
+			<p id="out"></p>
+			<button onclick="makePizza()">Kérek egy gluténmentes pizzát!</button>
+		</section>
 	</main>
 
     <div id="chatArea" style="display: none">
 		<h3>Szoba: <span id="roomTitle"></span></h3>
 		<h3>Aktuális játékos: <span id="actPlayer"></span></h3>
+		<h1 id="winner"></h1>
 		<table>
 			<tr>
 				<td data-row="0" data-column="0"></td>
