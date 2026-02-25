@@ -43,7 +43,7 @@ io.on("connection", (socket) => {
 		callback({ success: true });
 	});
 
-	socket.on("joinRoom", ({ roomName, password }, callback) => {
+	socket.on("joinRoom", ({ roomName, password, isStarter }, callback) => {
 			const room = rooms[roomName];
 			if (!room) return callback({ success: false, message: "A szoba nem létezik" });
 			if (room.password !== password) return callback({ success: false, message: "Hibás jelszó" });
@@ -51,13 +51,14 @@ io.on("connection", (socket) => {
 
 			socket.join(roomName);
 			if (room.users.length == 0) {
-				room.users.push({ id : socket.id, role : "circle" });
+				room.users.push({ id : socket.id, role : "circle", isStarter });
 			} else {
-				room.users.push({ id : socket.id, role : "cross" });
+				room.users.push({ id : socket.id, role : "cross", isStarter });
 			}
 
 			if (room.users.length == 2) {
-				const startingPlayerIndex = rng(0, 1);
+				// const startingPlayerIndex = rng(0, 1);
+				// room.users.map(u => [u.isStarter]);
 				io.to(roomName).emit("start", { room });
 				io.to(roomName).emit("msg", { map : rooms[roomName].map, prevPlayer : room.users[startingPlayerIndex == 1 ? 0 : 1].role });
 			}

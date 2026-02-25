@@ -5,6 +5,7 @@ let playerID = "";
 let currentRoom = {};
 let role = "";
 let canplace = true;
+let isStarter = false;
 
 const table = document.querySelector("table");
 const actPlayerSpan = document.querySelector("#actPlayer");
@@ -31,7 +32,7 @@ document.getElementById("joinBtn").onclick = () => {
 };
 
 function joinRoom(roomName, password) {
-	socket.emit("joinRoom", { roomName, password }, (res) => {
+	socket.emit("joinRoom", { roomName, password, isStarter }, (res) => {
 		if (res.success) {
 			currentRoomName = roomName;
 			document.getElementById("chatArea").style.display = "block";
@@ -107,6 +108,7 @@ function sleep(ms) {
 }
 
 function makePizza() {
+	document.querySelector("#pizzaBtn").style.display = "none";
 	out.innerText = "Pizza készítése";
 	sleep(3000).then(() => {
 		out.innerText = "Tészta elkészült";
@@ -121,7 +123,12 @@ function makePizza() {
 		out.innerText = "Feltét kész";
 		return sleep(5000);
 	}).then(() => {
-		out.innerHTML = `<img src="/pizza.jpg" alt="pizza">`;
+		out.innerHTML = `
+			<img src="/pizza.jpg" alt="pizza">
+			<p>Te kezded a játékot!</p>
+		`;
+		isStarter = true;
+		document.querySelector("#pizzaBtn").style.display = "block";
 	}).catch(() => {
 		out.innerText = "Hiba";
 	})
