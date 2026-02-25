@@ -57,8 +57,10 @@ io.on("connection", (socket) => {
 			}
 
 			if (room.users.length == 2) {
-				// const startingPlayerIndex = rng(0, 1);
-				// room.users.map(u => [u.isStarter]);
+				const startingPlayerIndex = rng(0, 1);
+				if (room.users[0].isStarter && !room.users[1].isStarter) startingPlayerIndex = 0;
+				if (room.users[1].isStarter && !room.users[0].isStarter) startingPlayerIndex = 1;
+				
 				io.to(roomName).emit("start", { room });
 				io.to(roomName).emit("msg", { map : rooms[roomName].map, prevPlayer : room.users[startingPlayerIndex == 1 ? 0 : 1].role });
 			}
