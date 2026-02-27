@@ -66,9 +66,18 @@ socket.on("msg", ({ map, prevPlayer, winner = "none" }) => {
 	}
 
 	if (winner != "none"){
-		if (winner == "draw") winnerH1.innerText = "Döntetlen!";
-		else if (winner == role) winnerH1.innerText = "Nyertél!";
-		else winnerH1.innerText = "Vesztettél!";
+		if (winner == "draw"){
+			winnerH1.innerText = "Döntetlen!";
+			winnerH1.style.color = "gray";
+		} 
+		else if (winner == role) {
+			winnerH1.innerText = "Nyertél!";
+			winnerH1.style.color = "green";
+		}
+		else {
+			winnerH1.innerText = "Vesztettél!";
+			winnerH1.style.color = "red";
+		}
 
 		setTimeout(() => {
 			gameEnd();
